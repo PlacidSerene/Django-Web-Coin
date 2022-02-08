@@ -1,5 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.contrib.auth import authenticate, login, logout
+
 # Create your views here.
 import requests
 # from .data_processing import get_data
@@ -10,9 +12,30 @@ def index(request):
     response = requests.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=1h%2C24h%2C3d%2C7d%2C30d')
     data = response.json()
     # status = data['status']
-    return render(request, 'coins/home.html', {
+    return render(request, 'coins/index.html', {
         'coins': data
     })
+def login(request):
+    if request.method == "POST":
+
+        # Attempt to sign user in
+        username = request.POST["username"]
+        password = request.POST["password"]
+        print(username, ":", type(username), password, ":", type(password))
+        user = authenticate(request, username=username, password=password)
+
+        # Check if authentication successful
+        if user is not None:
+            login(request, user)
+            print('successful login')
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            return render(request, "coins/login.html", {
+                "message": "Invalid username and/or password."
+            })
+    else:
+        return render(request, 'coins/login.html')
+    
 def test(request):
     # Generating some data for plots.
     x = [i for i in range(-10, 11)]
