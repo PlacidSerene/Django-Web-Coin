@@ -69,7 +69,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'crypto.wsgi.application'
-
+# User
+AUTH_USER_MODEL = 'coins.User'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
