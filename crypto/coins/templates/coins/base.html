@@ -185,6 +185,8 @@
                     <li>
                         <hr class="dropdown-divider">
                     </li>
+                    <li class="dropdown-item">${{user.fund}}</li>
+                    <li><a class="dropdown-item" href="{% url 'buying' user.id %}">Buying</a></li>
                     <li><a class="dropdown-item" href="{% url 'logout' %}">Sign out</a></li>
                 </ul>
             </div>

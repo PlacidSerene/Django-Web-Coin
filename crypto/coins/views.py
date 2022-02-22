@@ -67,6 +67,24 @@ def register(request):
     else:
         return render(request, "coins/register.html")
 
+def buying(request, user_id):
+    if request.method == 'POST':
+        coin = request.POST['coin_name'] 
+        amount = int(request.POST['amount'])
+        url = f'https://api.coingecko.com/api/v3/simple/price?ids={coin}&vs_currencies=usd'
+        response = requests.get(url)
+        data = response.json()
+        current_coin_price = data[coin]['usd']
+        user = User.objects.get(id=user_id)
+        coin_receive = amount/current_coin_price
+        user.fund = user.fund - amount
+        user.save()
+        print(user.fund)
+        return render(request, "coins/buying.html", {
+            'message': f'You just bought {coin_receive} {coin}'
+        })
+    return render(request, "coins/buying.html")
+
 def test(request):
     # Generating some data for plots.
     x = [i for i in range(-10, 11)]

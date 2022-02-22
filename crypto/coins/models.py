@@ -3,4 +3,6 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    pass
+    fund = models.IntegerField(default=500)
+
+    
