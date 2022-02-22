@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib.auth import authenticate, login, logout
-
+from django.urls import reverse
 # Create your views here.
 import requests
 # from .data_processing import get_data
@@ -15,19 +15,17 @@ def index(request):
     return render(request, 'coins/index.html', {
         'coins': data
     })
-def login(request):
+def login_view(request):
     if request.method == "POST":
-
         # Attempt to sign user in
         username = request.POST["username"]
         password = request.POST["password"]
         print(username, ":", type(username), password, ":", type(password))
         user = authenticate(request, username=username, password=password)
-
+        print(user)
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            print('successful login')
             return HttpResponseRedirect(reverse("index"))
         else:
             return render(request, "coins/login.html", {
@@ -35,7 +33,11 @@ def login(request):
             })
     else:
         return render(request, 'coins/login.html')
-    
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect(reverse("index"))
+
 def test(request):
     # Generating some data for plots.
     x = [i for i in range(-10, 11)]
