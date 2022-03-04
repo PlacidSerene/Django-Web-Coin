@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.db import IntegrityError
 # Create your views here.
@@ -11,7 +10,7 @@ from plotly.offline import plot
 import plotly.graph_objects as go
 
 # model
-from .models import User, Payment, Asset
+from .models import User, Payment
 
 def index(request):
     response = requests.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=1h%2C24h%2C3d%2C7d%2C30d')
@@ -67,11 +66,8 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "coins/register.html")
-
-# Support function for buying
-def add_asset_item(user, coin, coin_receive):
-    Asset.objects.create(user=user, coin_name=coin, coin_amount=coin_receive)
-
+def asset(request):
+    return render(request, 'coins/asset.html')
 def buying(request, user_id):
     if request.method == 'POST':
         coin = request.POST['coin_name'] 
@@ -80,25 +76,16 @@ def buying(request, user_id):
         response = requests.get(url)
         data = response.json()
         current_coin_price = data[coin]['usd']
-        # get user
         user = User.objects.get(id=user_id)
         coin_receive = amount/current_coin_price
-        fund = user.fund - amount
-        if fund < 0:
-            return render(request, "coins/buying.html", {
-            'message': 'insufficient fund'
-        })
-        else:
-            user.fund = fund
-            user.save()
-            Payment.objects.create(user=request.user, price=amount, coin_name=coin, coin_receive=coin_receive)
-            add_asset_item(request.user, coin, coin_receive)
+        user.fund = user.fund - amount
+        user.save()
+        
         return render(request, "coins/buying.html", {
             'message': f'You just bought {coin_receive} {coin}'
         })
     return render(request, "coins/buying.html")
 
-@login_required
-def asset(request, user_id):
-    return render(request, "coins/asset.html")
-
+def test(request):
+    # testing js
+    return render(request, 'coins/test.html')
