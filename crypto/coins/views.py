@@ -13,12 +13,8 @@ import plotly.graph_objects as go
 from .models import User, Payment
 
 def index(request):
-    response = requests.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=1h%2C24h%2C3d%2C7d%2C30d')
-    data = response.json()
     # status = data['status']
-    return render(request, 'coins/index.html', {
-        'coins': data
-    })
+    return render(request, 'coins/index.html')
 def login_view(request):
     if request.method == "POST":
         # Attempt to sign user in
@@ -66,8 +62,10 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "coins/register.html")
+
 def asset(request):
     return render(request, 'coins/asset.html')
+
 def buying(request, user_id):
     if request.method == 'POST':
         coin = request.POST['coin_name'] 
@@ -86,6 +84,8 @@ def buying(request, user_id):
         })
     return render(request, "coins/buying.html")
 
+def selling(request):
+    pass
 def test(request):
     # testing js
     return render(request, 'coins/test.html')
