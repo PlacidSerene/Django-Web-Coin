@@ -10,11 +10,11 @@ from plotly.offline import plot
 import plotly.graph_objects as go
 
 # model
-from .models import User, Payment
+from .models import User, Payment, Asset
 
 def index(request):
-    # status = data['status']
     return render(request, 'coins/index.html')
+
 def login_view(request):
     if request.method == "POST":
         # Attempt to sign user in
@@ -63,8 +63,17 @@ def register(request):
     else:
         return render(request, "coins/register.html")
 
-def asset(request):
-    return render(request, 'coins/asset.html')
+def add_asset_item(user, coin, coin_receive):
+    Asset.objects.create(user=user, coin_name=coin, coin_amount=coin_receive)
+
+def asset(request, user_id):
+    if request.user.is_authenticated:
+        user_asset = request.user.asset.all()
+    return render(request, 'coins/asset.html', {
+        "user_asset":user_asset
+    })
+
+
 
 def buying(request, user_id):
     if request.method == 'POST':
@@ -75,17 +84,26 @@ def buying(request, user_id):
         data = response.json()
         current_coin_price = data[coin]['usd']
         user = User.objects.get(id=user_id)
-        coin_receive = amount/current_coin_price
-        user.fund = user.fund - amount
-        user.save()
         
+        coin_receive = amount/current_coin_price
+        fund = user.fund - amount
+        if fund < 0:
+            return render(request, "coins/buying.html", {
+            'message': 'insufficient fund'
+        })
+        else:
+            user.fund = fund
+            user.save()
+            Payment.objects.create(user=request.user, price=amount, coin_name=coin, coin_receive=coin_receive)
+            add_asset_item(request.user, coin, coin_receive)
         return render(request, "coins/buying.html", {
             'message': f'You just bought {coin_receive} {coin}'
         })
     return render(request, "coins/buying.html")
 
-def selling(request):
+def selling(request, user_id):
     pass
+
 def test(request):
     # testing js
     return render(request, 'coins/test.html')
