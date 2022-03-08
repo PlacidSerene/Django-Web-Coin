@@ -3,11 +3,13 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.db import IntegrityError
+# serializtion
+from django.core import serializers
 # Create your views here.
 import requests
 # from .data_processing import get_data
-from plotly.offline import plot
-import plotly.graph_objects as go
+# from plotly.offline import plot
+# import plotly.graph_objects as go
 
 # model
 from .models import User, Payment, Asset
@@ -54,6 +56,8 @@ def register(request):
         try:
             user = User.objects.create_user(username, email, password)
             user.save()
+            fund = Fund.objects.create(user)
+            fund.save()
         except IntegrityError:
             return render(request, "coins/register.html", {
                 "message": "Username already taken."
@@ -68,7 +72,7 @@ def add_asset_item(user, coin, coin_receive):
 
 def asset(request, user_id):
     if request.user.is_authenticated:
-        user_asset = request.user.asset.all()
+        user_asset = serializers.serialize('json', request.user.asset.all())
     return render(request, 'coins/asset.html', {
         "user_asset":user_asset
     })
@@ -86,7 +90,7 @@ def buying(request, user_id):
         user = User.objects.get(id=user_id)
         
         coin_receive = amount/current_coin_price
-        fund = user.fund - amount
+        fund = user.fund.fund - amount
         if fund < 0:
             return render(request, "coins/buying.html", {
             'message': 'insufficient fund'
@@ -102,8 +106,31 @@ def buying(request, user_id):
     return render(request, "coins/buying.html")
 
 def selling(request, user_id):
-    pass
-
+    if request.method == 'POST':
+        coin = request.POST['coin_name'] 
+        amount = int(request.POST['amount'])
+        url = f'https://api.coingecko.com/api/v3/simple/price?ids={coin}&vs_currencies=usd'
+        response = requests.get(url)
+        data = response.json()
+        current_coin_price = data[coin]['usd']
+        user = User.objects.get(id=user_id)
+        
+        coin_receive = amount/current_coin_price
+        fund = user.fund.fund - amount
+        if fund < 0:
+            return render(request, "coins/buying.html", {
+            'message': 'insufficient fund'
+        })
+        else:
+            user.fund = fund
+            user.save()
+            Payment.objects.create(user=request.user, price=amount, coin_name=coin, coin_receive=coin_receive)
+            add_asset_item(request.user, coin, coin_receive)
+        return render(request, "coins/buying.html", {
+            'message': f'You just bought {coin_receive} {coin}'
+        })
+    return render(request, "coins/buying.html")
+    
 def test(request):
     # testing js
     return render(request, 'coins/test.html')
