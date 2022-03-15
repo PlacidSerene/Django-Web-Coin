@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.db import IntegrityError
 # serializtion
@@ -22,9 +23,7 @@ def login_view(request):
         # Attempt to sign user in
         username = request.POST["username"]
         password = request.POST["password"]
-        print(username, ":", type(username), password, ":", type(password))
         user = authenticate(request, username=username, password=password)
-        print(user)
         # Check if authentication successful
         if user is not None:
             login(request, user)
@@ -70,14 +69,13 @@ def register(request):
 def add_asset_item(user, coin, coin_receive):
     Asset.objects.create(user=user, coin_name=coin, coin_amount=coin_receive)
 
+@login_required
 def asset(request, user_id):
     if request.user.is_authenticated:
         user_asset = serializers.serialize('json', request.user.asset.all())
     return render(request, 'coins/asset.html', {
         "user_asset":user_asset
     })
-
-
 
 def buying(request, user_id):
     if request.method == 'POST':
@@ -90,13 +88,13 @@ def buying(request, user_id):
         user = User.objects.get(id=user_id)
         
         coin_receive = amount/current_coin_price
-        fund = user.fund.fund - amount
+        fund = user.balance - amount
         if fund < 0:
             return render(request, "coins/buying.html", {
             'message': 'insufficient fund'
         })
         else:
-            user.fund = fund
+            user.balance = fund
             user.save()
             Payment.objects.create(user=request.user, price=amount, coin_name=coin, coin_receive=coin_receive)
             add_asset_item(request.user, coin, coin_receive)
@@ -134,3 +132,7 @@ def selling(request, user_id):
 def test(request):
     # testing js
     return render(request, 'coins/test.html')
+
+
+def landing(request):
+    return render(request, 'coins/landing.html')
