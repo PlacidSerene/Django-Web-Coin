@@ -77,6 +77,7 @@ def asset(request, user_id):
         "user_asset":user_asset
     })
 
+
 def buying(request, user_id):
     if request.method == 'POST':
         coin = request.POST['coin_name'] 
