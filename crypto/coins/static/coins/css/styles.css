@@ -61,3 +61,12 @@ article:hover {
   overflow-x: hidden;
   overflow-y: auto;
 }
+
+/* Market page */
+
+.market-main {
+  margin-top: 4rem;
+}
+.title {
+  margin-top: 3rem;
+}

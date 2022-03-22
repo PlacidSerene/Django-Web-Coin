@@ -11,5 +11,7 @@ urlpatterns = [
     path('users/<int:user_id>/selling', views.buying, name='selling'),
     path('users/<int:user_id>/asset', views.asset, name='asset'),
     path('test', views.test, name='asset'),
-    path('landing', views.landing, name='landing')
+    path('landing', views.landing, name='landing'),
+    path('market', views.market, name='market'),
+    path('market/<str:coin>/details', views.details, name='details')
 ]

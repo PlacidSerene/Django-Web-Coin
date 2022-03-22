@@ -128,7 +128,7 @@ def selling(request, user_id):
         return render(request, "coins/buying.html", {
             'message': f'You just bought {coin_receive} {coin}'
         })
-    return render(request, "coins/buying.html")
+    return render(request, 'coins/buying.html')
     
 def test(request):
     # testing js
@@ -137,3 +137,9 @@ def test(request):
 
 def landing(request):
     return render(request, 'coins/landing.html')
+
+def details(request):
+    return render(request, 'coins/details.html')
+
+def market(request):
+    return render(request, 'coins/market.html')
