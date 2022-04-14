@@ -1,0 +1,73 @@
+{% extends "coins/landing.html" %}
+{% load static %}
+
+{% block title%}
+<title>Market</title>
+{% endblock %}
+
+
+{% block body %}
+
+<section class="container">
+    <h3 class='title'>Cryptocurrency Prices by Market Cap</h3>
+    <div class="row border">
+        <table class="table table-hover" id="example">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Coin Name</th>
+                    <th scope="col">Coin ID</th>
+                    <th scope="col">Price</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for coin in coins%}
+                <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>
+                        <div>
+                            <img src="{{coin.image}}" class='img-icon' alt="">
+                            {{coin.name}}
+                        </div>
+
+                    </td>
+                    <td class="coinName">{{coin.id}}</td>
+                    <td>{{coin.current_price}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+    <br>
+    {{coins}} <br>
+    Has Previous: {{coins.has_previous}} <br>
+    Has Next: {{coins.has_next}} <br>
+    Current Page: {{coins.number}} <br>
+    Number of Pages: {{coins.paginator.num_pages}}
+    <hr> <br>
+
+    {% if coins.has_previous %}
+    <a href="?page=1">&laquo First</a>
+    <a href="?page={{coins.previous_page_number}}">Previous</a>
+
+    {% endif %}
+
+    Page {{coins.number}} of {{coins.paginator.num_pages}}
+
+    {% if coins.has_next %}
+    <a href="?page={{coins.next_page_number}}">next</a>
+    <a href="?page={{coins.paginator.num_pages}}">Last &raquo</a>
+    {% endif %}
+    <!-- <div id="data-container"></div>
+    <div id="pagination-container"></div> -->
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://pagination.js.org/dist/2.1.5/pagination.min.js"></script>
+<!-- <script src="{% static 'coins/javascript/market.js' %}"></script> -->
+
+{% endblock %}

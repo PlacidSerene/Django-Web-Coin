@@ -8,6 +8,7 @@ from django.db import IntegrityError
 from django.core import serializers
 # Create your views here.
 import requests
+from django.core.paginator import Paginator 
 # from .data_processing import get_data
 # from plotly.offline import plot
 # import plotly.graph_objects as go
@@ -142,4 +143,16 @@ def details(request):
     return render(request, 'coins/details.html')
 
 def market(request):
-    return render(request, 'coins/market.html')
+    # Set up pagination
+
+    all_coins = []
+    for i in range(1,16):
+        response = requests.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page='+str(i)+'&sparkline=false&price_change_percentage=1h%2C24h%2C3d%2C7d%2C30d')
+        coin = response.json()
+        all_coins += coin
+    p = Paginator(all_coins, 100)
+    page = request.GET.get('page')
+    coins = p.get_page(page)
+    return render(request, 'coins/market.html', {
+        'coins':coins
+    })

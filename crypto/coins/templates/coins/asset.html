@@ -1,0 +1,17 @@
+{% extends "coins/base.html" %}
+{% load static %}
+
+{% block content %}
+{{user_asset|json_script:'assetdata'}}
+<!-- <div id="app"></div> -->
+<canvas id="myChart" width="200" height="200"></canvas>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-chartjs-2/4.0.1/chart.d.ts"></script>
+<script type="text/babel" src="{% static 'coins/javascript/asset.js' %}"></script>
+{% endblock %}

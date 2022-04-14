@@ -1,0 +1,14 @@
+{% extends "coins/base.html" %}
+
+
+{% block content %}
+<form action="{% url 'buying' user.id %}" method="post">
+    {% csrf_token %}
+    <input type="text" class="form-control" id="floatingInput" name='coin_name' placeholder="Coin">
+    <input type="number" class="form-control" id="floatingInput" name='amount' placeholder="Amount">
+    <input type="submit">
+</form>
+{% if message %}
+<div>{{ message }}</div>
+{% endif %}
+{% endblock %}
