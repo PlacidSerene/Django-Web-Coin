@@ -139,7 +139,7 @@ def test(request):
 def landing(request):
     return render(request, 'coins/landing.html')
 
-def details(request):
+def details(request, coin):
     return render(request, 'coins/details.html')
 
 def market(request):
@@ -153,6 +153,8 @@ def market(request):
     p = Paginator(all_coins, 100)
     page = request.GET.get('page')
     coins = p.get_page(page)
+    
     return render(request, 'coins/market.html', {
-        'coins':coins
+        'coins':coins,
+    
     })

@@ -23,43 +23,46 @@
 
             <tbody>
                 {% for coin in coins%}
-                <tr>
-                    <th scope="row">{{forloop.counter}}</th>
-                    <td>
-                        <div>
-                            <img src="{{coin.image}}" class='img-icon' alt="">
-                            {{coin.name}}
-                        </div>
 
+                <tr>
+                    <td scope="row"> <a style="text-decoration: none; color: inherit" href="">{{forloop.counter}}</a>
                     </td>
-                    <td class="coinName">{{coin.id}}</td>
-                    <td>{{coin.current_price}}</td>
+                    <td>
+                        <a style="text-decoration: none; color: inherit" href="">
+                            <div>
+                                <img src="{{coin.image}}" class='img-icon' alt="">
+                                {{coin.name}}
+                            </div>
+                        </a>
+                    </td>
+                    <td class="coinName"> <a style="text-decoration: none; color: inherit" href="">{{coin.id}}</a> </td>
+                    <td> <a style="text-decoration: none; color: inherit" href="">{{coin.current_price}}</a> </td>
                 </tr>
+
                 {% endfor %}
             </tbody>
 
         </table>
     </div>
-    <br>
-    {{coins}} <br>
-    Has Previous: {{coins.has_previous}} <br>
-    Has Next: {{coins.has_next}} <br>
-    Current Page: {{coins.number}} <br>
-    Number of Pages: {{coins.paginator.num_pages}}
-    <hr> <br>
 
-    {% if coins.has_previous %}
-    <a href="?page=1">&laquo First</a>
-    <a href="?page={{coins.previous_page_number}}">Previous</a>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
 
-    {% endif %}
+            {% if coins.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">&laquo First</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{coins.previous_page_number}}">Previous</a></li>
 
-    Page {{coins.number}} of {{coins.paginator.num_pages}}
+            {% endif %}
 
-    {% if coins.has_next %}
-    <a href="?page={{coins.next_page_number}}">next</a>
-    <a href="?page={{coins.paginator.num_pages}}">Last &raquo</a>
-    {% endif %}
+            <li class="page-item disabled"><a href="#" class="page-link">Page {{coins.number}} of
+                    {{coins.paginator.num_pages}}</a>
+            </li>
+            {% if coins.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{coins.next_page_number}}">next</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{coins.paginator.num_pages}}">Last &raquo</a></li>
+            {% endif %}
+        </ul>
+    </nav>
     <!-- <div id="data-container"></div>
     <div id="pagination-container"></div> -->
 </section>

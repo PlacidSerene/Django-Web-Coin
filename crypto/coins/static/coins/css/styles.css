@@ -16,7 +16,10 @@ h2 {
     rgba(0, 212, 255, 1) 100%
   );
 }
-
+a,
+u {
+  text-decoration: none;
+}
 .page-header {
   margin-top: 4rem;
   font-size: 1.125rem;
