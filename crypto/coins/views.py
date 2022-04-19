@@ -140,7 +140,6 @@ def landing(request):
     return render(request, 'coins/landing.html')
 
 def details(request, coin):
-
     return render(request, 'coins/details.html',{
         'coin': coin
     })
