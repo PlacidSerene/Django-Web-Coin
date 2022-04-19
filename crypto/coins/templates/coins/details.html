@@ -1,1 +1,18 @@
-bitcoin chart
+{% extends "coins/landing.html" %}
+{% load humanize %}
+{% load static %}
+
+{% block title%}
+<title>Coin</title>
+{% endblock %}
+
+
+{% block body %}
+<div>
+    <h3 class='title'>{{coin|title}}</h3>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'coins/javascript/details.js' %}"></script>
+{% endblock %}

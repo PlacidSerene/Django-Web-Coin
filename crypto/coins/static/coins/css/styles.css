@@ -73,3 +73,17 @@ article:hover {
 .title {
   margin-top: 5rem;
 }
+.coin-name {
+  width: 250px;
+}
+.text {
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+}
+.symbol {
+  margin-left: 5px;
+  color: #d1d1d1;
+}
+.upperCase {
+  text-transform: uppercase;
+}

@@ -1,4 +1,5 @@
 {% extends "coins/landing.html" %}
+{% load humanize %}
 {% load static %}
 
 {% block title%}
@@ -11,13 +12,17 @@
 <section class="container">
     <h3 class='title'>Cryptocurrency Prices by Market Cap</h3>
     <div class="row border">
-        <table class="table table-hover" id="example">
+        <table class="table table-hover text" id="example">
             <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Coin Name</th>
-                    <th scope="col">Coin ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Market Cap</th>
                     <th scope="col">Price</th>
+                    <th scope="col">Circulating Supply</th>
+                    <th scope="col">1h </th>
+                    <th scope="col">24h </th>
+                    <th scope="col">7d </th>
                 </tr>
             </thead>
 
@@ -28,15 +33,34 @@
                     <td scope="row"> <a style="text-decoration: none; color: inherit" href="">{{forloop.counter}}</a>
                     </td>
                     <td>
-                        <a style="text-decoration: none; color: inherit" href="">
-                            <div>
+                        <a style="text-decoration: none; color: inherit" href="{% url 'details' coin.id %}">
+                            <div class="coin-name">
                                 <img src="{{coin.image}}" class='img-icon' alt="">
-                                {{coin.name}}
+                                {{coin.name}}<span class="symbol upperCase">{{coin.symbol}}</span>
                             </div>
                         </a>
                     </td>
-                    <td class="coinName"> <a style="text-decoration: none; color: inherit" href="">{{coin.id}}</a> </td>
-                    <td> <a style="text-decoration: none; color: inherit" href="">{{coin.current_price}}</a> </td>
+                    <td> <a style="text-decoration: none; color: inherit"
+                            href="{% url 'details' coin.id %}">${{coin.market_cap|intcomma}}</a>
+                    </td>
+                    <td> <a style="text-decoration: none; color: inherit"
+                            href="{% url 'details' coin.id %}">${{coin.current_price|intcomma}}</a>
+                    </td>
+                    <td> <a class="upperCase" style="text-decoration: none; color: inherit"
+                            href="{% url 'details' coin.id %}">{{coin.circulating_supply|floatformat:0}}
+                            {{coin.symbol}}</a> </td>
+                    <td class="price-change postive"><a class="upperCase" style="text-decoration: none; color: inherit"
+                            href="{% url 'details' coin.id %}">
+                            {{coin.price_change_percentage_1h_in_currency|floatformat:3}}% </a>
+                    </td>
+                    <td class="price-change"> <a style="text-decoration: none; color: inherit"
+                            href="{% url 'details' coin.id %}">{{coin.price_change_percentage_24h_in_currency|floatformat:3}}%</a>
+                    </td>
+                    <td class="price-change"> <a style="text-decoration: none; color: inherit"
+                            href="{% url 'details' coin.id %}">{{coin.price_change_percentage_7d_in_currency|floatformat:3}}%</a>
+                    </td>
+
+
                 </tr>
 
                 {% endfor %}
@@ -71,6 +95,6 @@
 {% block scripts %}
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script src="https://pagination.js.org/dist/2.1.5/pagination.min.js"></script>
-<!-- <script src="{% static 'coins/javascript/market.js' %}"></script> -->
+<script src="{% static 'coins/javascript/market.js' %}"></script>
 
 {% endblock %}
