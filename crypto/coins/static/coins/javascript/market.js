@@ -1,5 +1,3 @@
-// const prices = $(".price-change");
-
 $(".price-change").each(function () {
   let priceChanges = $(this).text().slice(0, -2);
   priceChanges = parseFloat(priceChanges);
