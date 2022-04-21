@@ -141,9 +141,34 @@ def landing(request):
 
 def details(request, coin):
     response = requests.get(f'https://api.coingecko.com/api/v3/coins/{coin}?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false')
-    coin = response.json()
+    coin_data = response.json()
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            amount = int(request.POST['amount'])
+            url = f'https://api.coingecko.com/api/v3/simple/price?ids={coin}&vs_currencies=usd'
+            response = requests.get(url)
+            data = response.json()
+            current_coin_price = data[coin]['usd']
+            user = User.objects.get(id=request.user.id)
+            coin_receive = amount/current_coin_price
+            fund = user.balance - amount
+            if fund < 0:
+                return render(request, "coins/buying.html", {
+                'message': 'insufficient fund'
+            })
+            else:
+                user.balance = fund
+                user.save()
+                Payment.objects.create(user=request.user, price=amount, coin_name=coin, coin_receive=coin_receive)
+                add_asset_item(request.user, coin, coin_receive)
+            return render(request, "coins/details.html", {
+                'message': f'You just bought {coin_receive} {coin}',
+                'coin': coin_data
+            })
+        else:
+            return HttpResponseRedirect(reverse("login"))
     return render(request, 'coins/details.html',{
-        'coin': coin
+        'coin': coin_data
     })
 
 def market(request):
