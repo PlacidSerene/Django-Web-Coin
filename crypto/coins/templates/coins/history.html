@@ -1,0 +1,29 @@
+{% extends "coins/landing.html" %}
+{% load humanize %}
+{% load static %}
+
+{% block title%}
+<title>History</title>
+{% endblock %}
+
+
+{% block body %}
+
+<main class="container">
+    <h3 class="title">Transaction</h3>
+    {% for transaction in transactions %}
+    <div class="row">
+        {% if transaction.buying %}
+        <div class="col">Buying</div>
+        {% else %}
+        <div class="col">Selling</div>
+        {% endif %}
+        <div class="col">{{transaction.at_date}} {{transaction.at_time}}</div>
+        <div class="col">${{transaction.price}}</div>
+        <div class="col">{{transaction.coin_name}}</div>
+        <div class="col">{{transaction.coin_receive}}</div>
+    </div>
+    {% endfor %}
+</main>
+
+{% endblock %}

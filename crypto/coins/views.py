@@ -9,9 +9,7 @@ from django.core import serializers
 # Create your views here.
 import requests
 from django.core.paginator import Paginator 
-# from .data_processing import get_data
-# from plotly.offline import plot
-# import plotly.graph_objects as go
+
 
 # model
 from .models import User, Payment, Asset
@@ -51,7 +49,6 @@ def register(request):
             return render(request, "coins/register.html", {
                 "message": "Passwords must match."
             })
-
         # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
@@ -104,38 +101,7 @@ def buying(request, user_id):
             'message': f'You just bought {coin_receive} {coin}'
         })
     return render(request, "coins/buying.html")
-
-def selling(request, user_id):
-    if request.method == 'POST':
-        coin = request.POST['coin_name'] 
-        amount = int(request.POST['amount'])
-        url = f'https://api.coingecko.com/api/v3/simple/price?ids={coin}&vs_currencies=usd'
-        response = requests.get(url)
-        data = response.json()
-        current_coin_price = data[coin]['usd']
-        user = User.objects.get(id=user_id)
-        
-        coin_receive = amount/current_coin_price
-        fund = user.fund.fund - amount
-        if fund < 0:
-            return render(request, "coins/buying.html", {
-            'message': 'insufficient fund'
-        })
-        else:
-            user.fund = fund
-            user.save()
-            Payment.objects.create(user=request.user, price=amount, coin_name=coin, coin_receive=coin_receive)
-            add_asset_item(request.user, coin, coin_receive)
-        return render(request, "coins/buying.html", {
-            'message': f'You just bought {coin_receive} {coin}'
-        })
-    return render(request, 'coins/buying.html')
     
-def test(request):
-    # testing js
-    return render(request, 'coins/test.html')
-
-
 def landing(request):
     return render(request, 'coins/landing.html')
 
@@ -173,7 +139,6 @@ def details(request, coin):
 
 def market(request):
     # Set up pagination
-
     all_coins = []
     for i in range(1,2):
         response = requests.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page='+str(i)+'&sparkline=false&price_change_percentage=1h%2C24h%2C7d')
@@ -185,4 +150,11 @@ def market(request):
     
     return render(request, 'coins/market.html', {
         'coins':coins,
+    })
+
+
+def history(request, user_id):
+    transactions = reversed(Payment.objects.filter(user= request.user))
+    return render(request, 'coins/history.html', {
+        "transactions": transactions
     })
