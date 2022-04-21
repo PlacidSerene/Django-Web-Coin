@@ -140,6 +140,8 @@ def landing(request):
     return render(request, 'coins/landing.html')
 
 def details(request, coin):
+    response = requests.get(f'https://api.coingecko.com/api/v3/coins/{coin}?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false')
+    coin = response.json()
     return render(request, 'coins/details.html',{
         'coin': coin
     })
